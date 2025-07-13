@@ -180,6 +180,15 @@ def main():
             with TAB_CHAT:
                 ConfigChat()
 
+            
+        if st.button("Refresh", "reload", icon = ":material/refresh:"):
+            del st.session_state["pdfs_raw"]
+            del st.session_state["user_docs"]
+            del st.session_state["user_tags"]
+            del st.session_state["user_chats"]
+            del st.session_state["messages"]
+            st.rerun()
+
         
 
         
@@ -207,11 +216,7 @@ def main():
             with st.chat_message(message["role"], avatar = st.session_state["characters"][message["role"]]):
                 st.markdown(message["content"])
 
-            if (i != 0) & ( (i == 5) | (i % 15 == 0) ):
-                with st.chat_message(message["role"], avatar = st.session_state["characters"]["system"]):
-                    st.info("**Warning: Chat history disappears automatically if you do not download it manually.**")
-            
-            
+        
 
 
     if in_message := st.chat_input("Ask something regarding the selected literature:"):
@@ -219,6 +224,11 @@ def main():
         # *** --- User Input
         # Add user message to chat history
         user_input_time = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+        
+        # Display user message in chat message container
+        with st.chat_message("user", avatar = st.session_state["characters"]["user"]):
+            st.markdown(in_message)
+
         (st.session_state.messages[st.session_state['chat_params']['doc_id']]['chat_history']
          .append({"role": "user", 
                   "content": in_message, 
@@ -230,10 +240,6 @@ def main():
             worksheet = "user_chats",
             row       = [st.session_state["chat_params"]["doc_id"], "user", in_message, "-", user_input_time]
         )
-
-        # Display user message in chat message container
-        with st.chat_message("user", avatar = st.session_state["characters"]["user"]):
-            st.markdown(in_message)
 
         # *** --- Query from Pinecone Embedding DB
         similar_text_ls = st.session_state["PineconeDB"].search(
@@ -311,30 +317,35 @@ else:
         st.session_state["sheet_id"] = SheetManager.extract_sheet_id(st.session_state["_dbURL"])  # * initialized in user_manager!
 
     if "user_docs" not in st.session_state:
-        st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
+        with st.spinner("loading literature..."):
+            st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
 
     if "user_tags" not in st.session_state:
-        st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
+        with st.spinner("loading tags..."):
+            st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
 
     if "user_chats" not in st.session_state:
-        st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
+        with st.spinner("loading chat histories..."):
+            st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
 
     if "messages" not in st.session_state:
-        st.session_state["messages"] = {}
-        for doc_id in st.session_state['user_chats']["_fileId"].unique().tolist():
-            st.session_state["messages"].update({
-                doc_id: {
-                    "doc_id": doc_id,
-                    "chat_history": [
-                        {
-                            "role": row["_role"],
-                            "content": row["_content"],
-                            "model": row["_model"],
-                            "time": row["_time"]
-                        }
-                        for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
-                    ]
-                }
-            })
+        with st.spinner("parsing chat histories..."):
+            st.session_state["messages"] = {}
+            for doc_id in st.session_state['user_docs']["_fileId"].unique().tolist():
+                st.session_state["messages"].update({
+                    doc_id: {
+                        "doc_id": doc_id,
+                        "chat_history": [
+                            {
+                                "role": row["_role"],
+                                "content": row["_content"],
+                                "model": row["_model"],
+                                "time": row["_time"]
+                            }
+                            for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
+                        ] if not st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].empty
+                        else []
+                    }
+                })
 
     main()

@@ -81,6 +81,10 @@ def main():
     with st.sidebar:
         if st.button("Refresh", "reload", icon = ":material/refresh:"):
             del st.session_state["pdfs_raw"]
+            del st.session_state["user_docs"]
+            del st.session_state["user_tags"]
+            del st.session_state["user_chats"]
+            del st.session_state["messages"]
             st.rerun()
             
         st.caption(f"Logged in as: **{st.session_state['user_id']}**")
@@ -131,17 +135,17 @@ def main():
             with st.spinner("Generating Summary..."):
                 prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
                 model = Summarizor(language = row['language'], other_instruction = row["additional_prompt"])
-                response = model.apiCall(contents)
+                summary = model.apiCall(contents)
                 
-                summary = Summarizor.find_json_object(response)
-            
+                
+
             # * --- Update the generated summary to cache
             with st.spinner("Updating Summary..."):
                 
                 while True:
                     fileID = st.session_state["user_id"] + "-" + DataManager.generate_random_index()       #  Generate a random id for the doc
                     if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
-                        to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_tag"]] = [fileID, filename, summary['summary'], dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), len(summary['summary']), st.session_state["tag"]]
+                        to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_tag"]] = [fileID, filename, summary, dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), len(summary), st.session_state["tag"]]
                     break
                 else:
                     pass
@@ -174,9 +178,10 @@ def main():
             SheetManager.release_lock(st.session_state["sheet_id"], "user_docs")
         
         # ** Complete message
-        st.success("Done! Please check the result in Literature Summary Database")
+        st.success("Done! Now you can chat with the paper you just uploaded! Please check the result in **Literature Management** page or **Chat with Literature** page.")
         time.sleep(1.5)
         del st.session_state["user_docs"]
+        del st.session_state["pdfs_raw"]
         del to_update
         st.rerun()
 
@@ -237,55 +242,48 @@ if st.session_state['logged_in'] == False:
     with entry_r:
         if st.button("Sign Up", "register"):
             UserManager.register()
-
     st.markdown(Consts.index_explanation_text, unsafe_allow_html = True)
-
+    
 else:
     
     if st.session_state["_dbURL"] in [None, ""]:
         st.subheader("Set up your literature database")
         st.warning("This account does not have database configured. Click the following button to set up your database!")
-
-        if st.button("Set up database"):
-            GoogleSheetDB.update_user_db_url()
-            """
-            load in google sheet url
-            -> create data schema
-            -> update the url to the meta database
-            """
-
         st.stop()
-
-    # TODO Verify the DB link, and if not valid, inform the user to create a new one!
 
     if "sheet_id" not in st.session_state:
         st.session_state["sheet_id"] = SheetManager.extract_sheet_id(st.session_state["_dbURL"])  # * initialized in user_manager!
 
     if "user_docs" not in st.session_state:
-        st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
+        with st.spinner("loading literature..."):
+            st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
 
     if "user_tags" not in st.session_state:
-        st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
+        with st.spinner("loading tags..."):
+            st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
 
     if "user_chats" not in st.session_state:
-        st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
+        with st.spinner("loading chat histories..."):
+            st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
 
     if "messages" not in st.session_state:
-        st.session_state["messages"] = {}
-        for doc_id in st.session_state['user_chats']["_fileId"].unique().tolist():
-            st.session_state["messages"].update({
-                doc_id: {
-                    "doc_id": doc_id,
-                    "chat_history": [
-                        {
-                            "role": row["_role"],
-                            "content": row["_content"],
-                            "model": row["_model"],
-                            "time": row["_time"]
-                        }
-                        for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
-                    ]
-                }
-            })
+        with st.spinner("parsing chat histories..."):
+            st.session_state["messages"] = {}
+            for doc_id in st.session_state['user_docs']["_fileId"].unique().tolist():
+                st.session_state["messages"].update({
+                    doc_id: {
+                        "doc_id": doc_id,
+                        "chat_history": [
+                            {
+                                "role": row["_role"],
+                                "content": row["_content"],
+                                "model": row["_model"],
+                                "time": row["_time"]
+                            }
+                            for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
+                        ] if not st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].empty
+                        else []
+                    }
+                })
 
     main()

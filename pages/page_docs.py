@@ -68,6 +68,8 @@ def main():
         if st.button("Refresh", key = "reload", icon = ":material/refresh:"):
             del st.session_state["user_docs"]
             del st.session_state["user_tags"]
+            del st.session_state["user_chats"]
+            del st.session_state["messages"]
             st.rerun()
     
         st.caption(f"Logged in as: **{st.session_state['user_id']}**")
@@ -343,8 +345,8 @@ if st.session_state['logged_in'] == False:
     with entry_r:
         if st.button("Sign Up", "register"):
             UserManager.register()
-
     st.markdown(Consts.index_explanation_text, unsafe_allow_html = True)
+    
 else:
     
     if st.session_state["_dbURL"] in [None, ""]:
@@ -356,30 +358,35 @@ else:
         st.session_state["sheet_id"] = SheetManager.extract_sheet_id(st.session_state["_dbURL"])  # * initialized in user_manager!
 
     if "user_docs" not in st.session_state:
-        st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
+        with st.spinner("loading literature..."):
+            st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
 
     if "user_tags" not in st.session_state:
-        st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
+        with st.spinner("loading tags..."):
+            st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
 
     if "user_chats" not in st.session_state:
-        st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
+        with st.spinner("loading chat histories..."):
+            st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
 
     if "messages" not in st.session_state:
-        st.session_state["messages"] = {}
-        for doc_id in st.session_state['user_chats']["_fileId"].unique().tolist():
-            st.session_state["messages"].update({
-                doc_id: {
-                    "doc_id": doc_id,
-                    "chat_history": [
-                        {
-                            "role": row["_role"],
-                            "content": row["_content"],
-                            "model": row["_model"],
-                            "time": row["_time"]
-                        }
-                        for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
-                    ]
-                }
-            })
+        with st.spinner("parsing chat histories..."):
+            st.session_state["messages"] = {}
+            for doc_id in st.session_state['user_docs']["_fileId"].unique().tolist():
+                st.session_state["messages"].update({
+                    doc_id: {
+                        "doc_id": doc_id,
+                        "chat_history": [
+                            {
+                                "role": row["_role"],
+                                "content": row["_content"],
+                                "model": row["_model"],
+                                "time": row["_time"]
+                            }
+                            for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
+                        ] if not st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].empty
+                        else []
+                    }
+                })
 
     main()

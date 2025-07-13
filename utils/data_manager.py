@@ -10,15 +10,15 @@ import io
 class DataManager:
 
     @staticmethod
-    @st.dialog("請上傳欲處理的檔案（pdf）")
+    @st.dialog("Upload the file with pdf format")
     def FORM_pdf_input():
-        pdf_uploaded = st.file_uploader("**請上傳 pdf 檔案（支援多檔案上傳）**", accept_multiple_files = True)
-        language = st.selectbox("請選擇摘要語言", ["Traditional Chinese", "English", "Japanese"])
-        tag = st.selectbox("請選擇文件類別標籤", st.session_state["user_tags"]["_tag"].tolist())
-        instructions = st.text_area("請輸入額外的摘要提示（Optional）")
-        if st.button("確認"):
+        pdf_uploaded = st.file_uploader("**Upload (multiple files upload allowed**", accept_multiple_files = True)
+        language = st.selectbox("Select the language for summarization", ["Traditional Chinese", "English", "Japanese"])
+        tag = st.selectbox("Select a tag", st.session_state["user_tags"]["_tag"].tolist())
+        instructions = st.text_area("Input additional prompt (optional)")
+        if st.button("Confirm"):
             if language is None:
-                st.warning("請選擇語言")
+                st.warning("Select a language")
                 st.stop()
             if pdf_uploaded:
                 for file in pdf_uploaded:
@@ -29,7 +29,7 @@ class DataManager:
                 st.session_state["other_prompt"] = instructions if instructions else "None"
                 st.session_state["tag"] = tag
             else:
-                st.warning("請上傳檔案")
+                st.warning("Upload a file to proceed")
                 st.stop()
             st.rerun()
 

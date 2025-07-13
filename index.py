@@ -90,7 +90,6 @@ def main():
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Authentication
 if st.session_state['logged_in'] == False:
-
     # * 登入頁面
     st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
@@ -100,54 +99,48 @@ if st.session_state['logged_in'] == False:
     with entry_r:
         if st.button("Sign Up", "register"):
             UserManager.register()
-
     st.markdown(Consts.index_explanation_text, unsafe_allow_html = True)
-
+    
 else:
     
     if st.session_state["_dbURL"] in [None, ""]:
         st.subheader("Set up your literature database")
         st.warning("This account does not have database configured. Click the following button to set up your database!")
-
-        if st.button("Set up database"):
-            GoogleSheetDB.update_user_db_url()
-            """
-            load in google sheet url
-            -> create data schema
-            -> update the url to the meta database
-            """
-
         st.stop()
-
 
     if "sheet_id" not in st.session_state:
         st.session_state["sheet_id"] = SheetManager.extract_sheet_id(st.session_state["_dbURL"])  # * initialized in user_manager!
 
     if "user_docs" not in st.session_state:
-        st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
+        with st.spinner("loading literature..."):
+            st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
 
     if "user_tags" not in st.session_state:
-        st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
+        with st.spinner("loading tags..."):
+            st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
 
     if "user_chats" not in st.session_state:
-        st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
+        with st.spinner("loading chat histories..."):
+            st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats") 
 
     if "messages" not in st.session_state:
-        st.session_state["messages"] = {}
-        for doc_id in st.session_state['user_chats']["_fileId"].unique().tolist():
-            st.session_state["messages"].update({
-                doc_id: {
-                    "doc_id": doc_id,
-                    "chat_history": [
-                        {
-                            "role": row["_role"],
-                            "content": row["_content"],
-                            "model": row["_model"],
-                            "time": row["_time"]
-                        }
-                        for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
-                    ]
-                }
-            })
+        with st.spinner("parsing chat histories..."):
+            st.session_state["messages"] = {}
+            for doc_id in st.session_state['user_docs']["_fileId"].unique().tolist():
+                st.session_state["messages"].update({
+                    doc_id: {
+                        "doc_id": doc_id,
+                        "chat_history": [
+                            {
+                                "role": row["_role"],
+                                "content": row["_content"],
+                                "model": row["_model"],
+                                "time": row["_time"]
+                            }
+                            for _, row in st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].iterrows()
+                        ] if not st.session_state['user_chats'][st.session_state['user_chats']["_fileId"] == doc_id].empty
+                        else []
+                    }
+                })
 
     main()
