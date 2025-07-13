@@ -93,9 +93,9 @@ div.stDownloadButton > button {
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Function that renders selectbox for tags and documents
 def ConfigLiterature():
-    selected_tag = st.selectbox(":material/bookmark: Select a tag", [key.replace(" ", "_") for key in st.session_state['user_tags']['_tag']])
+    selected_tag = st.selectbox(":material/bookmark: Select a tag", [key for key in st.session_state['user_tags']['_tag']])
     XOR = st.session_state['user_docs']["_tag"] == selected_tag  
-    selected_file = st.selectbox(":material/book_ribbon: Select a paper to chat", [key.replace(" ", "_") for key in st.session_state['user_docs'][XOR]['_fileName']])
+    selected_file = st.selectbox(":material/book_ribbon: Select a paper to chat", [key for key in st.session_state['user_docs'][XOR]['_fileName']])
 
     if selected_file:
         doc_id = st.session_state['user_docs'].loc[st.session_state['user_docs']['_fileName'] == selected_file, '_fileId'].tolist()[0]
