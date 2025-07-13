@@ -207,7 +207,7 @@ def main():
 
     st.title("Chat with Literature")
     if not st.session_state['chat_params']["doc_id"]:
-            st.warning("There is no literature under the selected tag. Please upload the literature in **Literature Sumary Generator** under the tag or choose other tags.")
+            st.warning("There is no literature under the selected tag. Please upload the literature in **Upload & Summarize Literature** page under the tag, or choose other tags.")
             st.stop()
 
 
