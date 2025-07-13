@@ -48,17 +48,6 @@ if "ChatBot" not in st.session_state:
 if "PineconeDB" not in st.session_state:
     st.session_state["PineconeDB"] = PineconeManager()
 
-if "messages" not in st.session_state:
-    st.session_state["messages"] = {
-        row["_fileId"]: {
-            "doc_id": row["_fileId"],
-            "doc_name": row["_fileName"],
-            "doc_summary": row["_summary"],
-            "chat_history": []
-        }
-        for _, row in st.session_state['user_docs'].iterrows()
-    }
-
 if "characters" not in st.session_state:
     st.session_state["characters"] = {
         "user": ":material/face_3:",
