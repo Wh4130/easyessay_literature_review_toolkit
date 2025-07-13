@@ -80,10 +80,10 @@ def main():
     with TAB_READ:
         read_c1, read_c2 = st.columns(2)
         with read_c1:
-            selected_tag = st.selectbox("Select a tag", [key.replace(" ", "_") for key in st.session_state['user_tags']['_tag']])
+            selected_tag = st.selectbox("Select a tag", [key for key in st.session_state['user_tags']['_tag']])
         XOR = st.session_state['user_docs']["_tag"] == selected_tag                       
         with read_c2:
-            selected_file = st.selectbox("Select a paper", [key.replace(" ", "_") for key in st.session_state['user_docs'][XOR]['_fileName']])
+            selected_file = st.selectbox("Select a paper", [key for key in st.session_state['user_docs'][XOR]['_fileName']])
         
         with st.spinner("loading"):
             try:
