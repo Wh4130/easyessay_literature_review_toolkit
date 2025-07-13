@@ -94,7 +94,7 @@ def main():
 
 Please upload a new literature at **Upload & Summarize Literature** page.""")
                 if st.button("Upload & Summarize Literature", icon = ":material/edit_square:"):
-                    st.switch_page("pages/page_upload.py")
+                    st.switch_page("./page_upload.py")
     
     # *** Literature Lists ***
     with TAB_EDIT:
