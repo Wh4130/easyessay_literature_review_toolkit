@@ -27,7 +27,7 @@ class UserManager:
         if st.secrets["permission"]["guest_mode"]:
             st.info("""Welcome guest! You can log in with:
                     
-user id: **guest123** / password: **guest123**. 
+user id: **guest456** / password: **guest456**. 
                     
 You don't need to create a new account.""")
         # * 登入
