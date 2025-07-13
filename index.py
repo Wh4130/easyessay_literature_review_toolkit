@@ -83,7 +83,9 @@ def main():
     
     TAB_INTRO, TAB_DEMOS = st.tabs(["Introduction", "Demos"])
     with TAB_INTRO:
-        st.markdown(Consts.index_explanation_text, unsafe_allow_html = True)
+        st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
+    with TAB_DEMOS:
+        UIManager.show_fullscreen_demo()
 
     
 
@@ -99,7 +101,7 @@ if st.session_state['logged_in'] == False:
     with entry_r:
         if st.button("Sign Up", "register"):
             UserManager.register()
-    st.markdown(Consts.index_explanation_text, unsafe_allow_html = True)
+    st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
     
 else:
     
