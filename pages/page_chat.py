@@ -42,15 +42,6 @@ if "user_name" not in st.session_state:
 if "user_id" not in st.session_state:
     st.session_state["user_id"] = ""
 
-if "sheet_id" not in st.session_state:
-    st.session_state["sheet_id"] = SheetManager.extract_sheet_id(st.session_state['_dbURL'])
-
-if "user_docs" not in st.session_state:
-    st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
-
-if "user_tags" not in st.session_state:
-    st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags")
-
 if "ChatBot" not in st.session_state:
     st.session_state["ChatBot"] = ChatBot()
 
