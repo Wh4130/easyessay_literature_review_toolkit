@@ -119,8 +119,8 @@ You don't need to create a new account.""")
             with st.spinner("Registering..."):
                 st.session_state['_dbURL'] = database_url
                 st.session_state['sheet_id'] = SheetManager.extract_sheet_id(database_url)
-                st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
                 GoogleSheetDB.setup_database_schema(st.session_state['sheet_id'])
+                st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
 
                 now = dt.datetime.now().strftime("%I:%M%p on %B %d, %Y")
                 SheetManager.insert(
