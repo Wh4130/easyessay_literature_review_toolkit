@@ -96,7 +96,7 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
                 if st.button("Upload & Summarize Literature", icon = ":material/edit_square:"):
                     st.switch_page("page_upload.py")
     
-    # *** 文獻摘要一覽 & 編輯 ***
+    # *** Literature Lists ***
     with TAB_EDIT:
         st.session_state['user_docs']["_selected"] = False
         st.session_state['user_docs']['_tagModified'] = False    # * add a column to check whether '_tag' column is modified
@@ -316,7 +316,7 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
             user_docs_grouped = pd.merge(user_tags, user_docs, how = "left", on = '_tag').groupby("_tag").agg({"_fileName": "count"})
             st.data_editor(user_docs_grouped, width = 500,
                            disabled = ["_tag", "_fileName"],
-                           hide_index = True,
+                           hide_index = False,
                            column_config = {
                                "_tag": st.column_config.TextColumn(
                                    "Tag"
