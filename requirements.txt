@@ -1,0 +1,13 @@
+gspread
+pandas
+datetime
+oauth2client
+python-dotenv
+pypdf
+google-generativeai
+google-genai
+google-auth>=2.15.0
+password
+langchain-community
+langchain-pinecone
+langchain_text_splitters
