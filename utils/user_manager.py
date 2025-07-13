@@ -24,6 +24,8 @@ class UserManager:
         user_id = st.text_input("User ID or Email")
         password = st.text_input("Password", type = "password")
 
+        if st.secrets["permission"]["guest_mode"]:
+            st.info("Welcome guest! You can log in with user id / password = **guest123 / guest123**. You don't need to create a new account.")
         # * 登入
         if st.button("Login"):
 
