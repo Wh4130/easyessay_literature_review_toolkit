@@ -130,7 +130,8 @@ class SheetManager:
         lock_maps = {
             "user_info": "G1",
             "user_docs": "G1",
-            "user_tags": "C1"
+            "user_tags": "C1",
+            "user_chats": "F1"
         }
 
         """
@@ -173,7 +174,8 @@ class SheetManager:
         lock_maps = {
             "user_info": "G1",
             "user_docs": "G1",
-            "user_tags": "C1"
+            "user_tags": "C1",
+            "user_chats": "F1"
         }
 
         client = SheetManager.authenticate_google_sheets()
