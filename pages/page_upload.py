@@ -22,8 +22,7 @@ st.set_page_config(page_title = "Easy Essay - Literature Summary Database",
                    menu_items={
         'Get Help': None,
         'Report a bug': "mailto:huang0jin@gmail.com",
-        'About': """- Model - **Gemini** 1.5 Flash
-- Database Design - Google Sheets
+        'About': """
 - Developed by - **[Wally, Huang Lin Chun](https://antique-turn-ad4.notion.site/Wally-Huang-Lin-Chun-182965318fa7804c86bdde557fa376f4)**"""
     })
         
@@ -269,10 +268,12 @@ else:
     if "messages" not in st.session_state:
         with st.spinner("parsing chat histories..."):
             st.session_state["messages"] = {}
-            for doc_id in st.session_state['user_docs']["_fileId"].unique().tolist():
+            for _, row in st.session_state['user_docs'].iterrows():
+                doc_id = row["_fileId"]
+                doc_name = row["_fileName"]
                 st.session_state["messages"].update({
                     doc_id: {
-                        "doc_id": doc_id,
+                        "doc_name": doc_name,
                         "chat_history": [
                             {
                                 "role": row["_role"],

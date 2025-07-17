@@ -18,8 +18,7 @@ st.set_page_config(page_title = "Easy Essay - Literature Summary Database",
                    menu_items={
         'Get Help': None,
         'Report a bug': "mailto:huang0jin@gmail.com",
-        'About': """- Model - **Gemini** 1.5 Flash
-- Database Design - Google Sheets
+        'About': """
 - Developed by - **[Wally, Huang Lin Chun](https://antique-turn-ad4.notion.site/Wally-Huang-Lin-Chun-182965318fa7804c86bdde557fa376f4)**"""
     })
 
@@ -40,6 +39,11 @@ if "user_name" not in st.session_state:
 if "user_id" not in st.session_state:
     st.session_state["user_id"] = ""
 
+if "pinecone" not in st.session_state:
+    st.session_state["pinecone"] = PineconeManager()
+
+if "pinecone_idx_name" not in st.session_state:
+    st.session_state["pinecone_idx_name"] = "easyessay"
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Sidebar Config
 UIManager.render_sidebar()
@@ -167,24 +171,42 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
             if "delete" in st.session_state:
                 with st.spinner("Deleting..."):
 
-                    # * Acqcuire lock for the user first, before deletion
-                    SheetManager.acquire_lock(st.session_state["sheet_id"], "user_docs")
+                    # * Filter the indices of docs to delete
+                    docs_to_delete = st.session_state["user_docs"][[ True if id in edit_files[edit_files['_selected']]['_fileId'].tolist() else False for id in st.session_state["user_docs"]["_fileId"]]]
+                    chat_to_delete = st.session_state["user_chats"][[ True if id in edit_files[edit_files['_selected']]['_fileId'].tolist() else False for id in st.session_state["user_chats"]["_fileId"]]]
                     
-                    # * Reload the user_docs data before deletion, after lock
-                    st.session_state["user_docs"] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
 
-                    # * Delete the file in the selected
-                    SheetManager.delete_row(
-                        sheet_id = st.session_state["sheet_id"],
-                        worksheet_name = "user_docs",
-                        row_idxs = st.session_state["user_docs"][[ True if id in edit_files[edit_files['_selected']]['_fileId'].tolist() else False for id in st.session_state["user_docs"]["_fileId"]]].index
-                    )
+                    # * Delete literature from google sheet
+                    with st.spinner("Deleting literature summary and metadata..."):
+                        SheetManager.acquire_lock(st.session_state["sheet_id"], "user_docs")
+                        st.session_state["user_docs"] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
+                        SheetManager.delete_row(
+                            sheet_id = st.session_state["sheet_id"],
+                            worksheet_name = "user_docs",
+                            row_idxs = docs_to_delete.index
+                        )
+                        SheetManager.release_lock(st.session_state["sheet_id"], "user_docs")
 
-                    # * Release the lock
-                    SheetManager.release_lock(st.session_state["sheet_id"], "user_docs")
+                    # * Delete chat history
+                    with st.spinner("Deleting relevant chat history..."):
+                        SheetManager.acquire_lock(st.session_state["sheet_id"], "user_chats")
+                        st.session_state["user_chats"] = SheetManager.fetch(st.session_state["sheet_id"], "user_chats")
+                        SheetManager.delete_row(
+                            sheet_id = st.session_state["sheet_id"],
+                            worksheet_name = "user_chats",
+                            row_idxs = chat_to_delete.index
+                        )
+                        SheetManager.release_lock(st.session_state["sheet_id"], "user_chats")
+
+                    # * Delete relevant source data from Pinecone
+                    for _, row in docs_to_delete.iterrows():
+                        (st.session_state["pinecone"]
+                         .delete_from_pinecone(namespace = row["_fileId"], 
+                                               doc_title  = row["_fileName"],
+                                               index_name = st.session_state["pinecone_idx_name"]))
 
                 # * Reset session state
-                st.success("Deleted")
+                st.success("Deleted all selected data!")
                 time.sleep(1)
                 del st.session_state['user_docs']
                 del st.session_state["delete"]
@@ -372,10 +394,12 @@ else:
     if "messages" not in st.session_state:
         with st.spinner("parsing chat histories..."):
             st.session_state["messages"] = {}
-            for doc_id in st.session_state['user_docs']["_fileId"].unique().tolist():
+            for _, row in st.session_state['user_docs'].iterrows():
+                doc_id = row["_fileId"]
+                doc_name = row["_fileName"]
                 st.session_state["messages"].update({
                     doc_id: {
-                        "doc_id": doc_id,
+                        "doc_name": doc_name,
                         "chat_history": [
                             {
                                 "role": row["_role"],

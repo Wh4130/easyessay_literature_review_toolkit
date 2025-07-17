@@ -116,7 +116,7 @@ class DataManager:
                 chat_history = doc_data.get("chat_history", [])
                 
                 if chat_history:  # 只處理非空的聊天歷史
-                    sheet_name = str(doc_data.get("doc_name", f"Doc_{doc_id}")).replace('/', '_').replace('\\', '_')[:31]
+                    sheet_name = str(doc_data.get("doc_name", f"Doc_{doc_data["doc_name"]}")).replace('/', '_').replace('\\', '_')[:31]
                     
                     # 創建 DataFrame
                     result_df = pd.DataFrame(columns=["role", "content", "time", "model"])

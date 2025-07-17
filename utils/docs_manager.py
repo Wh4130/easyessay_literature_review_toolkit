@@ -95,6 +95,13 @@ class PineconeManager():
         ]
 
         return docs
+    
+    def delete_from_pinecone(self, namespace, doc_title, index_name):
+        with st.spinner(f"deleting file **{doc_title}** from the vector store..."):
+            index = self.pc.Index(index_name)
+            index.delete_namespace(namespace = namespace)
+
+
 
 if __name__ == "__main__":
     PC              = PineconeManager()
@@ -104,7 +111,12 @@ if __name__ == "__main__":
     #     namespace = "test",
     #     index_name = "easyessay"
     # )
-    print("searching most similar page...")
-    results = PC.search(query = "停車場收入", k = 10, namespace = "LGmZr75V", index_name = "easyessay")
-    print("most similar page:")
+
+    # print("searching most similar page...")
+    # results = PC.search(query = "停車場收入", k = 10, namespace = "LGmZr75V", index_name = "easyessay")
+    # print("most similar page:")
+    # print(results)
+
+    print("deleting documents...")
+    results = PC.delete_from_pinecone("guest123-CjEggwuL", "SOcial media", "easyessay")
     print(results)
