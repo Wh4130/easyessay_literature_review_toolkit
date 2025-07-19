@@ -111,6 +111,14 @@ if st.session_state['logged_in'] == False:
     with entry_r:
         if st.button("Sign Up", "register"):
             UserManager.register()
+
+    if st.secrets["permission"]["guest_mode"]:
+            st.info("""Welcome guest! You can log in with:
+                    
+user id: **guest456** / password: **guest456**. 
+                    
+You don't need to create a new account.""")
+            
     st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
     
 else:
