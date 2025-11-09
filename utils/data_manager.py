@@ -80,6 +80,7 @@ class DataManager:
         characters = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
         return ''.join(random.choices(characters, k = 8))
     
+    
     # --- Compile all chat histories for all literatures
     # def compile_chat_histories(chat_histories: dict[dict]) -> pd.DataFrame:
     #     output = io.BytesIO()
