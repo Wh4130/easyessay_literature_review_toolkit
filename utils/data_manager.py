@@ -75,6 +75,7 @@ class DataManager:
             return base64.b64encode(img_file.read()).decode("utf-8")
     
     # --- Generate a random index for document
+    @staticmethod
     def generate_random_index():
         characters = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
         return ''.join(random.choices(characters, k = 8))
