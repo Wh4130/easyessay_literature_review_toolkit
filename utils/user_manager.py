@@ -83,7 +83,7 @@ You don't need to create a new account.""")
         email = st.text_input("Gmail")
         password_ = st.text_input("Password", type = "password")
         password_confirm = st.text_input("Password Confirmation", type = "password")
-        database_url = st.text_input("Please input a PUBLICLY EDITABLE google sheet url as your database.", help = "Create a new empty google sheet, set the link **public** and **editable**, and paste it here. This link is used to store your literature summaries and chat histories.")
+        database_url = st.text_input("Please input a :blue[PUBLICLY EDITABLE] google sheet url as your database.", help = "Create a new empty google sheet, set the link **public** and **editable**, and paste it here. This link is used to store your literature summaries and chat histories.")
         if st.button("Submit", key = "Regist"):
             st.session_state['user_infos'] = SheetManager.fetch(SheetManager.extract_sheet_id(st.secrets['gsheet-urls']['user']), "user_info")
             # * 註冊驗證
