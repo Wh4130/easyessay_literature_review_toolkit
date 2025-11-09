@@ -187,7 +187,7 @@ def main():
         
     if st.button("Check Status", 
                 key = "check_status", type = "primary", icon = ":material/history_edu:"):
-        check_status = requests.get(f"https://easyessaybackend.onrender.com/check_status/{st.session_state['user_id']}")
+        check_status = requests.get(f"https://easyessaybackend.onrender.com/tasks/{st.session_state['user_id']}")
         # check_status = requests.get(f"http://127.0.0.1:8000/tasks/{st.session_state['user_id']}") # for testing only
         with st.expander("Summary Generation Status"):
             st.dataframe(check_status.json())
