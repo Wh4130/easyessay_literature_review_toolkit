@@ -2,6 +2,7 @@ import streamlit as st
 import hashlib
 import datetime as dt
 import time
+import requests
 from utils.data_manager import DataManager
 from utils.sheet_manager import SheetManager, GoogleSheetDB
 
