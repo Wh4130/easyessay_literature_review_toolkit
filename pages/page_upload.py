@@ -123,31 +123,40 @@ def main():
         BOX_PREVIEW.empty()
         # ** Generating Summary
         st.info("Generating summary and updating literature to vector database. Please do not switch to other pages or close this page...")
-        to_update = pd.DataFrame(columns = ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_tag"])
+        # to_update = pd.DataFrame(columns = ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_tag"])
         progress_bar = st.progress(0, "(0%)Processing...")
 
         for i, row in st.session_state['pdfs_raw'].iterrows():
-            filename = row['filename'].replace(" ", "_")
-            contents = "\n".join(row['content'])
-            progress_bar.progress(i / len(st.session_state['pdfs_raw']), f"({round(i / len(st.session_state['pdfs_raw']), 2) * 100}%)「{filename}」...")
-
-            with st.spinner("Generating Summary..."):
-                prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
-                model = Summarizor(language = row['language'], other_instruction = row["additional_prompt"])
-                summary = model.apiCall(contents)
-                
-                
-
-            # * --- Update the generated summary to cache
-            with st.spinner("Updating Summary..."):
-                
-                while True:
-                    fileID = st.session_state["user_id"] + "-" + DataManager.generate_random_index()       #  Generate a random id for the doc
-                    if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
-                        to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_tag"]] = [fileID, filename, summary, dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), len(summary), st.session_state["tag"]]
+            # --- generate unique idx
+            while True:
+                fileID = st.session_state["user_id"] + "-" + DataManager.generate_random_index()       #  Generate a random id for the doc
+                if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
                     break
-                else:
-                    pass
+
+            # create data instance by schema 
+            doc_data_json = {
+                "fileid": fileID,
+                "filename": row['filename'].replace(" ", "_"),
+                "content": "\n".join(row['content']),
+                "user_id": st.session_state['user_id'],
+                "tag": row['tag'],
+                "lang": row['language'],
+                "additional_prompt": row['additional_prompt'],
+                "db_url": st.session_state['_dbURL']
+            }
+
+            
+            progress_bar.progress(i / len(st.session_state['pdfs_raw']), f"({round(i / len(st.session_state['pdfs_raw']), 2) * 100}%)「{doc_data_json['filename']}」...")
+
+            # with st.spinner("Generating Summary..."):
+            #     prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
+            #     model = Summarizor(language = row['language'], other_instruction = row["additional_prompt"])
+            #     summary = model.apiCall(contents)
+
+            # * --- Send request to generate summary in background
+            response = requests.post("https://easyessaybackend.onrender.com/summarize", json = doc_data_json)
+                
+
             # * --- Update the document to Pinecone Embedding Database
             with st.spinner("Upserting pdfs to Pinecone Embedding Database..."):
                 st.session_state['pinecone'].insert_docs(
@@ -155,33 +164,24 @@ def main():
                     namespace = fileID,
                     index_name = st.session_state['pinecone_idx_name']
                 )
-                # initialize chat history container
+
+            # * Initialize chat history container
+            with st.spinner("Initializing chat history container..."):
                 st.session_state['messages'][fileID] =  {
                     "doc_id": fileID,
-                    "doc_name": filename,
-                    "doc_summary": summary,
+                    "doc_name": doc_data_json['filename'],
+                    "doc_summary": "N/A",
                     "chat_history": []
                 }
                 
             
         progress_bar.empty()
 
-        # ** Update to database
-        with st.spinner("Updating to database..."):
-            # * acquire a lock  
-            SheetManager.acquire_lock(st.session_state["sheet_id"], "user_docs")
-            # * update
-            for _, row in to_update.iterrows():
-                SheetManager.insert(sheet_id, "user_docs", row.tolist())
-            # * release the lock
-            SheetManager.release_lock(st.session_state["sheet_id"], "user_docs")
-        
         # ** Complete message
         st.success("Done! Now you can chat with the paper you just uploaded! Please check the result in **Literature Management** page or **Chat with Literature** page.")
         time.sleep(1.5)
         del st.session_state["user_docs"]
         del st.session_state["pdfs_raw"]
-        del to_update
         st.rerun()
 
             
