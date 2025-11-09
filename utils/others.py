@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 
+
 class Others:
 
     @staticmethod
@@ -8,3 +9,5 @@ class Others:
         response = requests.get("https://api.ipify.org?format=json")
         public_ip = response.json()["ip"]
         st.caption(f"Deployed IP Address: **:blue[{public_ip}]**")
+
+    
