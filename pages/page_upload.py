@@ -184,13 +184,17 @@ def main():
         time.sleep(1.5)
         del st.session_state["user_docs"]
         del st.session_state["pdfs_raw"]
-        
+        st.rerun()  
+
     if st.button("Check Status", 
                 key = "check_status", type = "primary", icon = ":material/history_edu:"):
         check_status = requests.get(f"https://easyessaybackend.onrender.com/tasks/{st.session_state['user_id']}")
         # check_status = requests.get(f"http://127.0.0.1:8000/tasks/{st.session_state['user_id']}") # for testing only
         with st.expander("Summary Generation Status"):
-            st.dataframe(check_status.json())
+            try:
+                st.dataframe(check_status.json())
+            except:
+                st.error("No status returned. Please try again later.")
             
     # *** 文獻原始資料預覽 ***
     with BOX_PREVIEW.container():
