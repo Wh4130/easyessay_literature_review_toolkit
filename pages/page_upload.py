@@ -156,6 +156,7 @@ def main():
 
             # * --- Send request to generate summary in background
             response = requests.post("https://easyessaybackend.onrender.com/summarize", json = doc_data_json)
+            # response = requests.post("http://127.0.0.1:8000/summarize", json = doc_data_json) # for testing only
                 
 
             # * --- Update the document to Pinecone Embedding Database
@@ -179,12 +180,17 @@ def main():
         progress_bar.empty()
 
         # ** Complete message
-        st.success("Done! Now you can chat with the paper you just uploaded! Please check the result in **Literature Management** page or **Chat with Literature** page.")
+        st.success("Literature uploaded and being summarized. Please check the status by clicking the 'Check Status' button that follows, or check the result in **Literature Management** page or **Chat with Literature** page later.")
         time.sleep(1.5)
         del st.session_state["user_docs"]
         del st.session_state["pdfs_raw"]
-        st.rerun()
-
+        
+    if st.button("Check Status", 
+                key = "check_status", type = "primary", icon = ":material/history_edu:"):
+        check_status = requests.get(f"https://easyessaybackend.onrender.com/check_status/{st.session_state['user_id']}")
+        # check_status = requests.get(f"http://127.0.0.1:8000/tasks/{st.session_state['user_id']}") # for testing only
+        with st.expander("Summary Generation Status"):
+            st.dataframe(check_status.json())
             
     # *** 文獻原始資料預覽 ***
     with BOX_PREVIEW.container():
