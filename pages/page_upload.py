@@ -57,18 +57,6 @@ if "pinecone_idx_name" not in st.session_state:
 # *** Sidebar Config
 UIManager.render_sidebar()
 
-# * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# *** HTML & CSS
-st.markdown("""<style>
-div.stButton > button {
-    width: 200;  
-    height: 50px;
-    margin-left: 0;
-    margin-right: auto;
-}</style>
-""", unsafe_allow_html = True)
-
-
 
 
 
@@ -95,9 +83,9 @@ def main():
     # * 定義頁面區塊
     cl, cr = st.columns(2)
     with cl:
-        button_upload = st.button("Upload", key = "upload", icon = ":material/upload:")
+        button_upload = st.button("Upload", key = "upload", icon = ":material/upload:", width = "stretch")
     with cr:
-        button_start = st.button("Summarize", key = "summarize", type = "primary", icon = ":material/start:")
+        button_start = st.button("Summarize", key = "summarize", type = "primary", icon = ":material/start:", width = "stretch")
     
     if button_upload:
         DataManager.FORM_pdf_input()
@@ -226,7 +214,7 @@ def main():
                     },
                     hide_index = True,
                     width = 1000)
-        if st.button("Delete selected file", key = "delete_pdf", icon = ":material/delete:"):
+        if st.button("Delete selected file", key = "delete_pdf", icon = ":material/delete:", width = "stretch"):
             with st.spinner("Deleting"):
                 st.session_state["pdfs_raw"] = preview_cache[preview_cache["selected"] == False]
                 st.rerun()
@@ -238,10 +226,10 @@ if st.session_state['logged_in'] == False:
     st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
     with entry_l:
-        if st.button("Login", "login"):
+        if st.button("Login", "login", width = "stretch"):
             UserManager.log_in()
     with entry_r:
-        if st.button("Sign Up", "register"):
+        if st.button("Sign Up", "register", width = "stretch"):
             UserManager.register()
     st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
     

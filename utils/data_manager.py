@@ -16,7 +16,7 @@ class DataManager:
         language = st.selectbox("Select the language for summarization", ["Traditional Chinese", "English", "Japanese"])
         tag = st.selectbox("Select a tag", st.session_state["user_tags"]["_tag"].tolist())
         instructions = st.text_area("Input additional prompt (optional)")
-        if st.button("Confirm"):
+        if st.button("Confirm", width = "stretch"):
             if language is None:
                 st.warning("Select a language")
                 st.stop()

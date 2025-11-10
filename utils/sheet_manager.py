@@ -338,7 +338,7 @@ class GoogleSheetDB(SheetManager):
     @st.dialog("Set up your own literature database")
     def update_user_db_url():
         input_ = st.text_input("Input the google sheet link...")
-        if st.button("Create Database Schema"):
+        if st.button("Create Database Schema", width = "stretch"):
             user_infos = (SheetManager
                             .fetch(
                                 SheetManager

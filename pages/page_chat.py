@@ -67,16 +67,6 @@ if "chat_params" not in st.session_state:
 # *** Sidebar Config
 UIManager.render_sidebar()
 
-# * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# *** HTML & CSS
-st.markdown("""<style>
-div.stButton > button {
-    width: 100%;  /* 設置按鈕寬度為頁面寬度的 60% */
-    height: 50px;
-    margin-left: 0;
-    margin-right: auto;
-}</style>
-""", unsafe_allow_html = True)
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Function that renders selectbox for tags and documents
@@ -121,11 +111,11 @@ def ConfigChat():
         additional_prompts = st.text_area(
             "Additional system instructions.",
             value = st.session_state["chat_params"]["additional_sys_prompt"])
-        if st.button("Save"):
+        if st.button("Save", width = "stretch"):
             st.session_state["chat_params"]["additional_sys_prompt"] = additional_prompts
             st.rerun()
 
-    if st.button("Customize System Prompts"):
+    if st.button("Customize System Prompts", width = "stretch"):
         additional_chat_sys_prompt()
 
 
@@ -139,7 +129,7 @@ Chat histories will be saved in excel format.
     chat_hist_io = b""
 
     with chat_l:
-        if st.button("Prepare Chat History", "transform_chat_history"):
+        if st.button("Prepare Chat History", "transform_chat_history", width = "stretch"):
             chat_hist_io = DataManager.compile_chat_histories(st.session_state["messages"])
     
     with chat_r:
@@ -149,7 +139,8 @@ Chat histories will be saved in excel format.
             mime     = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             file_name = f"chat_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
             icon     = ":material/download:",
-            type     = "primary" if chat_hist_io else "secondary"
+            type     = "primary" if chat_hist_io else "secondary",
+            width = "stretch"
         )
 
 def main():
@@ -169,7 +160,7 @@ def main():
                 ConfigChat()
 
             
-        if st.button("Refresh", "reload", icon = ":material/refresh:"):
+        if st.button("Refresh", "reload", icon = ":material/refresh:", width = "stretch"):
             del st.session_state["pdfs_raw"]
             del st.session_state["user_docs"]
             del st.session_state["user_tags"]
@@ -287,10 +278,10 @@ if st.session_state['logged_in'] == False:
     st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
     with entry_l:
-        if st.button("Login", "login"):
+        if st.button("Login", "login", width = "stretch"):
             UserManager.log_in()
     with entry_r:
-        if st.button("Sign Up", "register"):
+        if st.button("Sign Up", "register", width = "stretch"):
             UserManager.register()
     st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
     

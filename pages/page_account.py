@@ -45,16 +45,6 @@ if "user_id" not in st.session_state:
 UIManager.render_sidebar()
 
 
-# * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# *** HTML & CSS
-st.markdown("""<style>
-div.stButton > button {
-    width: 100%;  /* 設置按鈕寬度為頁面寬度的 60% */
-    height: 50px;
-    margin-left: 0;
-    margin-right: auto;
-}</style>
-""", unsafe_allow_html = True)
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** main function
@@ -83,7 +73,7 @@ def main():
 
 
     # * Button for logging out
-    if st.button("Log Out", "logout", icon = ":material/logout:"):
+    if st.button("Log Out", "logout", icon = ":material/logout:", width = "stretch"):
         st.session_state['logged_in'] = False
         st.success("Logged Out")
         for session in ["user_email", "user_id", "_registerTime", "messages", "user_docs", "user_tags", "user_chats",
@@ -94,7 +84,7 @@ def main():
 
     # * Button for deregistering
     if st.secrets["permission"]["guest_mode"] == False:     # * guest mode = true -> not able to delete the account
-        if st.button("**:red[Delete the Account]**", "deregister", icon = ":material/report:"):
+        if st.button("**:red[Delete the Account]**", "deregister", icon = ":material/report:", width = "stretch"):
             UserManager.deregister()
 
 
@@ -106,10 +96,10 @@ if st.session_state['logged_in'] == False:
     st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
     with entry_l:
-        if st.button("Login", "login"):
+        if st.button("Login", "login", width = "stretch"):
             UserManager.log_in()
     with entry_r:
-        if st.button("Sign Up", "register"):
+        if st.button("Sign Up", "register", width = "stretch"):
             UserManager.register()
     st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
     
