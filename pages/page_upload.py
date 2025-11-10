@@ -60,7 +60,7 @@ UIManager.render_sidebar()
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** HTML & CSS
 st.markdown("""<style>
-div.stButton button {
+div.stButton button st-key-reload {
     width: 200;  /* 設置按鈕寬度為頁面寬度的 60% */
     height: 50px;
     margin-left: 0;
