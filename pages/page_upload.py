@@ -61,11 +61,10 @@ UIManager.render_sidebar()
 # *** HTML & CSS
 st.markdown("""<style>
 div.stButton > button {
-    width: 200;  /* 設置按鈕寬度為頁面寬度的 60% */
+    width: 200;  
     height: 50px;
     margin-left: 0;
     margin-right: auto;
-    color: red;
 }</style>
 """, unsafe_allow_html = True)
 
@@ -80,7 +79,7 @@ def main():
     
     # * 登入後顯示使用者名稱與重新整理按鈕
     with st.sidebar:
-        if st.button("Refresh", "reload", icon = ":material/refresh:"):
+        if st.button("Refresh", "reload", icon = ":material/refresh:", width = "stretch"):
             del st.session_state["pdfs_raw"]
             del st.session_state["user_docs"]
             del st.session_state["user_tags"]
