@@ -57,6 +57,18 @@ if "pinecone_idx_name" not in st.session_state:
 # *** Sidebar Config
 UIManager.render_sidebar()
 
+# * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# *** HTML & CSS
+st.markdown("""<style>
+div.stButton > button {
+    width: 200;  
+    height: 50px;
+    margin-left: 0;
+    margin-right: auto;
+}</style>
+""", unsafe_allow_html = True)
+
+
 
 
 

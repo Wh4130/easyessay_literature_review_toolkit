@@ -67,6 +67,16 @@ if "chat_params" not in st.session_state:
 # *** Sidebar Config
 UIManager.render_sidebar()
 
+# * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# *** HTML & CSS
+st.markdown("""<style>
+div.stButton > button {
+    width: 100%;  /* 設置按鈕寬度為頁面寬度的 60% */
+    height: 50px;
+    margin-left: 0;
+    margin-right: auto;
+}</style>
+""", unsafe_allow_html = True)
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Function that renders selectbox for tags and documents
