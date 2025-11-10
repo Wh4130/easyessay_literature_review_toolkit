@@ -69,25 +69,14 @@ UIManager.render_sidebar()
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** HTML & CSS
-st.html("""<style>
+st.markdown("""<style>
 div.stButton > button {
     width: 100%;  /* 設置按鈕寬度為頁面寬度的 60% */
     height: 50px;
     margin-left: 0;
     margin-right: auto;
-}
-</style>
-""")
-
-st.html("""<style>
-div.stDownloadButton > button {
-    width: 100%;  /* 設置按鈕寬度為頁面寬度的 60% */
-    height: 50px;
-    margin-left: 0;
-    margin-right: auto;
-}
-</style>
-""")
+}</style>
+""", unsafe_allow_html = True)
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Function that renders selectbox for tags and documents
