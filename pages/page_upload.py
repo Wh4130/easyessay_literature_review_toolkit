@@ -155,17 +155,19 @@ def main():
             #     summary = model.apiCall(contents)
 
             # * --- Send request to generate summary in background
-            response = requests.post("https://easyessaybackend.onrender.com/summarize", json = doc_data_json)
-            # response = requests.post("http://127.0.0.1:8000/summarize", json = doc_data_json) # for testing only
+            with st.spinner("Sending summarization request to backend..."):
+                response = requests.post("https://easyessaybackend.onrender.com/summarize", json = doc_data_json)
+                # response = requests.post("http://127.0.0.1:8000/summarize", json = doc_data_json) # for testing only
+                if response.status_code != 404:
+                    st.error("Backend API error! No such api existing")
                 
 
             # * --- Update the document to Pinecone Embedding Database
             with st.spinner("Upserting pdfs to Pinecone Embedding Database..."):
-                st.session_state['pinecone'].insert_docs(
-                    texts = row['content'],
-                    namespace = fileID,
-                    index_name = st.session_state['pinecone_idx_name']
-                )
+                # response = requests.post("https://easyessaybackend.onrender.com/upsert_to_pinecone", json = doc_data_json)
+                response = requests.post("http://127.0.0.1:8000/upsert_to_pinecone", json = doc_data_json) # for testing only
+                if response.status_code != 404:
+                    st.error("Backend API error! No such api existing")
 
             # * Initialize chat history container
             with st.spinner("Initializing chat history container..."):
