@@ -32,7 +32,7 @@ user id: **guest123** / password: **guest123**.
                     
 You don't need to create a new account.""")
         # * 登入
-        if st.button("Login"):
+        if st.button("Login", width = "stretch"):
 
             with st.spinner("Verifying..."):
 
