@@ -243,7 +243,7 @@ def main():
         similar_text_ls = st.session_state["PineconeDB"].search(
                                             query = in_message, 
                                             k = st.session_state["chat_params"]['top_k'], 
-                                            namespace = st.session_state["chat_params"]["doc_id"],   # napespace = document ID
+                                            namespace = st.session_state["chat_params"]["doc_id"],   # namespace = document ID
                                             index_name = "easyessay"
         )
         # Display assistant response in chat message container

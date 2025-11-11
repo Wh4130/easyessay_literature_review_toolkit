@@ -2,6 +2,7 @@ import streamlit as st
 from utils.data_manager import DataManager
 from utils.others import Others
 import streamlit.components.v1 as components
+import requests
 
 
 class UIManager:
@@ -32,6 +33,13 @@ class UIManager:
 
 
             Others.fetch_IP()   
+
+            backend_health_check = requests.get("https://easyessaybackend.onrender.com/health")
+            if backend_health_check.status_code != 200:
+                st.warning("Backend server collapsed! Please try again later.")
+            else:
+                st.caption("Backend server is healthy.")
+            
 
     @staticmethod
     def show_fullscreen_demo():
