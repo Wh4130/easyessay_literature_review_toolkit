@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import requests
 import time
 from datetime import datetime
 import io
@@ -240,12 +241,24 @@ def main():
         )
 
         # *** --- Query from Pinecone Embedding DB
-        similar_text_ls = st.session_state["PineconeDB"].search(
-                                            query = in_message, 
-                                            k = st.session_state["chat_params"]['top_k'], 
-                                            namespace = st.session_state["chat_params"]["doc_id"],   # namespace = document ID
-                                            index_name = "easyessay"
-        )
+        # similar_text_ls = st.session_state["PineconeDB"].search(
+        #                                     query = in_message, 
+        #                                     k = st.session_state["chat_params"]['top_k'], 
+        #                                     namespace = st.session_state["chat_params"]["doc_id"],   # namespace = document ID
+        #                                     index_name = "easyessay"
+        # )
+        query_instance_json = {
+            "query": in_message,
+            "param_k": st.session_state["chat_params"]['top_k'],
+            "fileid": st.session_state["chat_params"]["doc_id"]
+        }
+        response = requests.post("https://easyessaybackend.onrender.com/query_from_pinecone", json = query_instance_json)
+        # response = requests.post("http://127.0.0.1:8000/query_from_pinecone", json = query_instance_json) # for testing only
+        
+        if response.status_code == 404:
+            st.error("Backend API error! No such api existing")
+
+        similar_text_ls = response.json()["result"]
         # Display assistant response in chat message container
         try:
             with st.chat_message("assistant", avatar = st.session_state["characters"]["assistant"]):
