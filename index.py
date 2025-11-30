@@ -76,8 +76,6 @@ st.markdown("""<style>
 # *** Main
 def main():
 
-    with st.sidebar:
-        st.caption(f"Logged in as: **{st.session_state['user_id']}**")
         # Others.fetch_IP()
     
     TAB_INTRO, TAB_DEMOS = st.tabs(["Introduction", "Demos"])
@@ -100,10 +98,12 @@ if st.session_state['logged_in'] == False:
     with entry_r:
         if st.button("Sign Up", "register", width = "stretch"):
             UserManager.register()
-    st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
+    main()
     
 else:
-    
+    with st.sidebar:
+        st.caption(f"Logged in as: **{st.session_state['user_id']}**")
+
     if st.session_state["_dbURL"] in [None, ""]:
         st.subheader("Set up your literature database")
         st.warning("This account does not have database configured. Click the following button to set up your database!")
