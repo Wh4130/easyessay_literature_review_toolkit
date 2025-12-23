@@ -6,11 +6,9 @@ from utils.data_manager import DataManager
 
 class Consts:
 
-    gemini_model_list = [
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite-preview-06-17",
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-lite"
+    model_list = [
+        "gpt-oss-120b",
+        "llama-3.3-70b"
     ]
 
     page_helps = {

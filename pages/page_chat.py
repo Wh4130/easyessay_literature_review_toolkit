@@ -108,7 +108,7 @@ def ConfigLiterature():
 # *** Function that allows modification for LLM setting
 def ConfigLLM():
     # * Model selection
-    selected_model = st.selectbox(":material/toggle_on: Select the model", Consts.gemini_model_list)
+    selected_model = st.selectbox(":material/toggle_on: Select the model", Consts.model_list)
     st.session_state["ChatBot"].changeModel(selected_model)
 
     # * Set top_k
@@ -264,7 +264,7 @@ def main():
             with st.chat_message("assistant", avatar = st.session_state["characters"]["assistant"]):
                 
                 stream = (st.session_state["ChatBot"]
-                          .apiCall(in_message,
+                          .apiCall(st.session_state.messages[st.session_state['chat_params']['doc_id']]['chat_history'],
                                    similar_text_ls,
                                     doc_summary = st.session_state["chat_params"]["summary"],
                                     additional_prompt = st.session_state["chat_params"]["additional_sys_prompt"]))
@@ -298,7 +298,7 @@ def main():
         except Exception as e:
             st.write(e)
             with st.chat_message("assistant", avatar = st.session_state["characters"]["system"]):
-                st.error("**We encountered some errors when connecting to Gemini API... Please try again later. Remember to save the chat history if needed!**")
+                st.error("**We encountered some errors when connecting to Language Model... Please try again later. Remember to save the chat history if needed!**")
 
 
 

@@ -1,5 +1,4 @@
 from utils.data_manager import DataManager
-from utils.llm_manager import Summarizor
 from utils.prompt_manager import PromptManager
 from utils.sheet_manager import SheetManager, GoogleSheetDB
 from utils.user_manager import UserManager
