@@ -8,6 +8,7 @@ google-generativeai
 google-genai
 google-auth>=2.15.0
 password
+litellm
 langchain-community
 langchain-pinecone
 langchain_text_splitters
