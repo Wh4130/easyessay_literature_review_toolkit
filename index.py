@@ -80,6 +80,12 @@ def main():
     
     TAB_INTRO, TAB_DEMOS = st.tabs(["Introduction", "Demos"])
     with TAB_INTRO:
+        if st.secrets["permission"]["guest_mode"]:
+            st.info("""Welcome guest! You can log in with:
+                    
+user id: **guest123** / password: **guest123**. 
+                    
+You don't need to create a new account.""")
         st.markdown(UIManager.index_explanation_text, unsafe_allow_html = True)
     with TAB_DEMOS:
         UIManager.show_fullscreen_demo()
