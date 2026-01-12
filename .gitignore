@@ -2,3 +2,4 @@ __pycache__
 credits.json
 .streamlit/secrets.toml
 tests.ipynb
+.DS_Store
