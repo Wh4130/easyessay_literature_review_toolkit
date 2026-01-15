@@ -132,12 +132,18 @@ def main():
                 fileID = st.session_state["user_id"] + "-" + DataManager.generate_random_index()       #  Generate a random id for the doc
                 if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
                     break
-
+            
+            # * slice the content so that it does not exceed the context window
+            if len("\n".join(row['content'])) > 60000:
+                content = "\n".join(row['content'])[:60000]
+            else:
+                content = "\n".join(row['content'])
+            
             # create data instance by schema 
             doc_data_json = {
                 "fileid": fileID,
                 "filename": row['filename'].replace(" ", "_"),
-                "content": "\n".join(row['content']),
+                "content": content,
                 "user_id": st.session_state['user_id'],
                 "tag": row['tag'],
                 "lang": row['language'],
