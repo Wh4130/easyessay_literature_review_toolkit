@@ -34,7 +34,7 @@ class UIManager:
 
             Others.fetch_IP()   
 
-            backend_health_check = requests.get("https://easyessaybackend.onrender.com/health")
+            backend_health_check = requests.get("https://easyessaybackend.onrender.com/")
             if backend_health_check.status_code != 200:
                 st.warning("Backend server collapsed! Please try again later.")
             else:
