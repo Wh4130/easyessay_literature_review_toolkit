@@ -4,3 +4,4 @@ credits.json
 tests.ipynb
 .DS_Store
 .venv
+.env
