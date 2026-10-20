@@ -53,6 +53,7 @@ Other instructions:
     
     @staticmethod
     def chat_rag(literature_summary, RAG_texts: list[str]):
+      joined_texts = "\n\n".join(RAG_texts)
       return f"""You are a research assistant helping students understand academic literature. Answer questions using ONLY the provided literature summary and additional context passages.
 
 CORE REQUIREMENTS:
@@ -94,7 +95,7 @@ PROHIBITED:
 --- INFORMATION PROVIDED AS FOLLOWS ---
 <Literature Summary>: {literature_summary}
 
-<Additional Context>: {"\n\n".join(RAG_texts)}
+<Additional Context>: {joined_texts}
 """
       
     
