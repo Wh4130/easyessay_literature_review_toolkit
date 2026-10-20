@@ -6,11 +6,8 @@ from utils.data_manager import DataManager
 
 class Consts:
 
-    gemini_model_list = [
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite-preview-06-17",
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-lite"
+    model_list = [
+        "nvidia/nemotron-3-ultra-550b-a55b:free"
     ]
 
     page_helps = {
