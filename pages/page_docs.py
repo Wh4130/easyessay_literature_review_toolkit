@@ -93,7 +93,10 @@ def main():
         with st.spinner("loading"):
             try:
                 res = st.session_state['user_docs'].loc[st.session_state['user_docs']['_fileName'] == selected_file, '_summary'].tolist()[0]
-                st.markdown(res, unsafe_allow_html = True, help = "hah")
+                if res == "PENDING":
+                    st.warning("The document is being summarized! Check later.")
+                else:
+                    st.markdown(res, unsafe_allow_html = True)
             except:
                 st.warning("""There is no literature under the selected tag.
 
