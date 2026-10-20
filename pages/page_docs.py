@@ -69,7 +69,7 @@ def main():
     
     # * Render user name and refresh button after logged in
     with st.sidebar:
-        if st.button("Refresh", key = "reload", icon = ":material/refresh:"):
+        if st.button("Refresh", key = "reload", icon = ":material/refresh:", width = "stretch"):
             del st.session_state["user_docs"]
             del st.session_state["user_tags"]
             del st.session_state["user_chats"]
@@ -99,7 +99,7 @@ def main():
                 st.warning("""There is no literature under the selected tag.
 
 Please upload a new literature at **Upload & Summarize Literature** page.""")
-                if st.button("Upload & Summarize Literature", icon = ":material/edit_square:"):
+                if st.button("Upload & Summarize Literature", icon = ":material/edit_square:", width = "stretch"):
                     st.switch_page("pages/page_upload.py")
     
     # *** Literature Lists ***
@@ -153,14 +153,14 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
                 st.info("This action is not revertable.")
                 l, r = st.columns(2)
                 with l:
-                    if st.button("Confirm"):
+                    if st.button("Confirm", width = "stretch"):
                         st.session_state['delete'] = True
                         st.rerun()
                 with r:
-                    if st.button("Cancel"):
+                    if st.button("Cancel", width = "stretch"):
                         st.rerun()
 
-            if st.button("Delete Literature", key = "delete_literature", icon = ":material/delete_forever:"):
+            if st.button("Delete Literature", key = "delete_literature", icon = ":material/delete_forever:", width = "stretch"):
                 if len(edit_files[edit_files['_selected'] == True]) == 0:
                     st.warning("Please select the literatures that you want to delete")
                     time.sleep(1)
@@ -219,7 +219,7 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
                 edit_files['_modified'] = st.session_state['user_docs']['_tag'] != edit_files['_tag']
                 # id: new tag
                 update_dict = {row["_fileId"]: row["_tag"] for _, row in edit_files.iterrows() if row['_modified']} 
-            if st.button("Save Changes of Tags" , icon = ":material/save:"):
+            if st.button("Save Changes of Tags" , icon = ":material/save:", width = "stretch"):
                 if update_dict == {}:
                     st.warning("No pending changes")
                     time.sleep(1.5)
@@ -256,7 +256,7 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
         with c1:
             tag_to_add = st.text_input("Add new tag", key = "add_tag")
 
-            if st.button("Add", icon = ":material/new_label:"):
+            if st.button("Add", icon = ":material/new_label:", width = "stretch"):
                 if tag_to_add:
                     if tag_to_add in st.session_state["user_tags"]["_tag"].tolist():
                         st.warning("This tag already exists")
@@ -286,7 +286,7 @@ Please upload a new literature at **Upload & Summarize Literature** page.""")
             available_tags = st.session_state["user_tags"]["_tag"].tolist()
             available_tags.remove("default")
             tags_to_delete = st.multiselect("Delete a Tag", available_tags)
-            if st.button("Delete", icon = ":material/delete_forever:"):
+            if st.button("Delete", icon = ":material/delete_forever:", width = "stretch"):
                 if not tags_to_delete:
                     st.warning("Please select the tag that you want to delete")
                     time.sleep(1)
@@ -362,10 +362,10 @@ if st.session_state['logged_in'] == False:
     st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
     with entry_l:
-        if st.button("Login", "login"):
+        if st.button("Login", "login", width = "stretch"):
             UserManager.log_in()
     with entry_r:
-        if st.button("Sign Up", "register"):
+        if st.button("Sign Up", "register", width = "stretch"):
             UserManager.register()
 
     if st.secrets["permission"]["guest_mode"]:

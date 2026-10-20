@@ -31,7 +31,7 @@ user id: **guest456** / password: **guest456**.
                     
 You don't need to create a new account.""")
         # * 登入
-        if st.button("Login"):
+        if st.button("Login", width = "stretch"):
 
             with st.spinner("Verifying..."):
 
@@ -84,7 +84,7 @@ You don't need to create a new account.""")
         password_ = st.text_input("Password", type = "password")
         password_confirm = st.text_input("Password Confirmation", type = "password")
         database_url = st.text_input("Please input a PUBLICLY EDITABLE google sheet url as your database.")
-        if st.button("Submit", key = "Regist"):
+        if st.button("Submit", key = "Regist", width = "stretch"):
             st.session_state['user_infos'] = SheetManager.fetch(SheetManager.extract_sheet_id(st.secrets['gsheet-urls']['user']), "user_info")
             # * 註冊驗證
             if not username:
@@ -154,7 +154,7 @@ You don't need to create a new account.""")
     def deregister():
         st.warning("Warning: \n\nThis operation will delete all user information and relevant data, including the raw text data in the vector database, and is not revertable. The literature summary and chat histories in your google sheet database will not be deleted.", icon = ':material/warning:')
         claim = st.text_input(f"If you are sure to delete the account, please input the User ID：\n\n:red[**{st.session_state['user_id']}**]")
-        if st.button("DELETE", key = "confirm_deregister"):
+        if st.button("DELETE", key = "confirm_deregister", width = "stretch"):
 
             # *** Check if the claim is correct
             if claim != f"{st.session_state['user_id']}":
