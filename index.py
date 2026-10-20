@@ -60,7 +60,7 @@ UIManager.render_sidebar()
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** HTML & CSS
 st.html("""<style>
-div.stButton > button {
+.stButton button {
     width: 100%;  /* 設置按鈕寬度為頁面寬度的 60% */
     height: 50px;
     margin-left: 0;
@@ -95,10 +95,10 @@ if st.session_state['logged_in'] == False:
     st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
     with entry_l:
-        if st.button("Login", "login"):
+        if st.button("Login", "login", width = "stretch"):
             UserManager.log_in()
     with entry_r:
-        if st.button("Sign Up", "register"):
+        if st.button("Sign Up", "register", width = "stretch"):
             UserManager.register()
             
     if st.secrets["permission"]["guest_mode"]:
