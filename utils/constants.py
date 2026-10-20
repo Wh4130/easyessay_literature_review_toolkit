@@ -7,8 +7,7 @@ from utils.data_manager import DataManager
 class Consts:
 
     model_list = [
-        "gpt-oss-120b",
-        "llama-3.3-70b"
+        "nvidia/nemotron-3-ultra-550b-a55b:free"
     ]
 
     page_helps = {
