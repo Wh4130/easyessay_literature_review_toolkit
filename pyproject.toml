@@ -1,0 +1,19 @@
+[project]
+name = "easyessay"
+version = "0.1.0"
+description = "A RAG-based literature review system"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit",
+    "pandas",
+    "requests",
+    "openpyxl",
+    "gspread",
+    "oauth2client",
+    "python-dotenv",
+    "pypdf",
+    "litellm",
+    "langchain-pinecone",
+    "langchain-text-splitters",
+]
